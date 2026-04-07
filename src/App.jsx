@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion'; //Importacion de animacion
+import { motion as Motion, AnimatePresence } from 'framer-motion'; //Importacion de animacion
 import React, { useState, useRef } from 'react' // importar el react
 import './App.css';
 
@@ -51,7 +51,7 @@ function App() {
 
       <AnimatePresence>
         {view !== 'home' && (
-          <motion.button
+          <Motion.button
             key="back-button" // Key para que AnimatePresence rastree el mismo elemento
             className="back-home-btn"
             aria-label="Volver al inicio"
@@ -62,11 +62,11 @@ function App() {
             onClick={() => setView('home')}
           >
             ← Volver al Home
-          </motion.button>
+          </Motion.button>
         )}
       </AnimatePresence>
 
-      <motion.div 
+      <Motion.div 
         className="bubble-container" 
         ref={containerRef} 
         onMouseMove={handleMouseMove}
@@ -123,7 +123,7 @@ function App() {
           <h3 className="studies">Multimedia Engineering</h3>
           <button className="button-contact">Contact Me</button>
         </header>
-      </motion.div>
+      </Motion.div>
     </main>
   )
 }
