@@ -8,34 +8,43 @@ function App() {
   const [view, setView] = useState('home'); // 'home', 'anim', 'web', 'video', 'games'
   const containerRef = useRef(null);
 
-  // Mapping for cleaner animation logic
+  // Mapping de las posiciones de los botones
   const viewConfig = {
-    anim:  { x: 800,  y: 600 },
-    web:   { x: 800,  y: -600 },
+    anim: { x: 800, y: 600 },
+    web: { x: 800, y: -600 },
     games: { x: -800, y: 600 },
     video: { x: -800, y: -600 },
-    home:  { x: 0,    y: 0 }
+    home: { x: 0, y: 0 }
   };
 
+  // Logos para transiciones 
+  const logoAssets = {
+    anim: "src/assets/ae.png",
+    web: "src/assets/react.webp",
+    games: "src/assets/blender.png",
+    video: "src/assets/premiere.png"
+  };
+
+  //
   const backBtnConfig = {
-  anim:  { bottom: '40px', right: '40px', top: 'auto', left: 'auto' }, // Esquina Inferior Derecha
-  web:   { top: '40px',    right: '40px', bottom: 'auto', left: 'auto' }, // Esquina Superior Derecha
-  games: { bottom: '40px', left: '40px',  top: 'auto', right: 'auto' }, // Esquina Inferior Izquierda
-  video: { top: '40px',    left: '40px',  bottom: 'auto', right: 'auto' }, // Esquina Superior Izquierda
-};
+    anim: { bottom: '40px', right: '40px', top: 'auto', left: 'auto' }, // Esquina Inferior Derecha
+    web: { top: '40px', right: '40px', bottom: 'auto', left: 'auto' }, // Esquina Superior Derecha
+    games: { bottom: '40px', left: '40px', top: 'auto', right: 'auto' }, // Esquina Inferior Izquierda
+    video: { top: '40px', left: '40px', bottom: 'auto', right: 'auto' }, // Esquina Superior Izquierda
+  };
 
   const handleMouseMove = (e) => {
     if (!containerRef.current || view !== 'home') return;
 
     // Buscamos todos los botones dentro del contenedor
     const buttons = containerRef.current.querySelectorAll('.corner-btn');
-    
+
     buttons.forEach(btn => {
       const rect = btn.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY);
-      
+
       // Ajustamos el radio de proximidad a 500px para que sea más natural
       const proximity = Math.max(0, 1 - distance / 500);
       btn.style.setProperty('--proximity', proximity);
@@ -48,6 +57,38 @@ function App() {
       <div className="bg-circle"></div>
       <div className="bg-circle-2"></div>
       <div className="bg-circle-3"></div>
+
+      {/* Watermark Logo */}
+      <AnimatePresence mode="sync">
+        {view !== 'home' && (
+          <Motion.img
+            key={`logo-${view}`}
+            src={logoAssets[view]}
+            className="watermark-master"
+            initial={{
+              // Usamos coordenadas exactas e invertidas para eliminar el desfase
+              x: -viewConfig[view].x, 
+              y: -viewConfig[view].y,
+              scale: 0, //escala inicial
+              opacity: 1 //opacidad inicial
+            }}
+            animate={{
+              x: 0, // Posicion Final
+              y: 0,
+              scale: 6, // Lower scale + Fixed CSS size = More stability. ademas escala final
+              opacity: 0.2, 
+            }}
+            exit={{ opacity: 0, scale: 8 }}
+            transition={{
+              type: "spring",
+              stiffness: 50, // Mayor tensión para que inicie de inmediato
+              damping: 25,   // Amortiguación equilibrada para evitar rebote excesivo
+              mass: 1.0,     // Menos masa = menor inercia inicial
+              restDelta: 0.001 
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {view !== 'home' && (
@@ -66,9 +107,9 @@ function App() {
         )}
       </AnimatePresence>
 
-      <Motion.div 
-        className="bubble-container" 
-        ref={containerRef} 
+      <Motion.div
+        className="bubble-container"
+        ref={containerRef}
         onMouseMove={handleMouseMove}
         initial={false}
         animate={{
@@ -82,32 +123,32 @@ function App() {
         transition={{ type: "spring", stiffness: 70, damping: 20, mass: 1 }} //el tipo de animacion con su ligerez, tension y peso 
       >
         <nav className="corner-nav">
-          <button 
-            onClick={() => setView('anim')} 
+          <button
+            onClick={() => setView('anim')}
             className="corner-btn top-left"
           >
             <img src="src/assets/ae.png" className="logo-hover" alt="AE" />
             <span className="text-button">Animación</span>
           </button>
 
-          <button 
-            onClick={() => setView('web')} 
+          <button
+            onClick={() => setView('web')}
             className="corner-btn bottom-left"
           >
             <img src="src/assets/react.webp" className="logo-hover" alt="AE" />
             <span className="text-button">Web Site</span>
           </button>
 
-          <button 
-            onClick={() => setView('games')} 
+          <button
+            onClick={() => setView('games')}
             className="corner-btn top-right"
           >
             <img src="src/assets/blender.png" className="logo-hover" alt="AE" />
             <span className="text-button">Videogames</span>
           </button>
 
-          <button 
-            onClick={() => setView('video')} 
+          <button
+            onClick={() => setView('video')}
             className="corner-btn bottom-right"
           >
             <img src="src/assets/premiere.png" className="logo-hover" alt="AE" />
@@ -124,6 +165,7 @@ function App() {
           <button className="button-contact">Contact Me</button>
         </header>
       </Motion.div>
+
     </main>
   )
 }

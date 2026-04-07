@@ -258,6 +258,7 @@ z-index: 10;
   opacity: var(--proximity, 0);
   transform: scale(calc(var(--proximity, 0) * 1.3)); /* Crece hasta un 30% más */
   margin-bottom: 5px; /* Espacio pequeño entre logo y texto */
+  object-fit: contain;
   transition: transform 0.2s ease-out, opacity 0.2s ease-out; 
   filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
 }
@@ -269,4 +270,17 @@ z-index: 10;
   transform: translateY(calc(-10px * (1 - var(--proximity, 0)))) scale(calc(var(--proximity, 0) * 1.3));
   transition: transform 0.1s ease-out, opacity 0.1s ease-out; /* Transición suave para el movimiento */
   filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+}
+
+.watermark-master {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px; /* Fixed base size */
+  height: 100px; /* Fixed base size */
+  margin-top: -50px; /* Half of height to center perfectly */
+  margin-left: -50px; /* Half of width to center perfectly */
+  object-fit: contain; /* Prevents deformation */
+  pointer-events: none; /* User can click through it */
+  z-index: 1; /* Below the bubble-container (10) */
 }
