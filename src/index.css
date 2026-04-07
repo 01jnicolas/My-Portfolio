@@ -1,0 +1,257 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-layout {
+  background-color: #000000;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+
+  overflow: hidden; 
+  position: relative; /* Lienzo de referencia para los círculos */
+}
+
+.bubble-container {
+background: rgba(255, 255, 255, 0.07);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(6.3px);
+-webkit-backdrop-filter: blur(6.3px);
+border: 1px solid rgba(255, 255, 255, 0.3);
+width: 150vh;
+height: 90vh;
+
+position: relative;
+z-index: 10;
+}
+
+.bg-circle {
+  position: absolute; 
+  border-radius: 50%;
+  width: 500px;
+  height: 500px;
+  background-color: #D44720; /* Color que combina con tu h1 */ /* Puedes cambiarlo por un gradiente o rgba para un efecto más suave */
+  top: 0;
+  left: 0;
+  filter: blur(100px);
+  opacity: 0.5;
+
+  /* Añadimos la animación */
+  animation: floatAnimation 20s ease-in-out infinite alternate; /* Nombre, duración, función de tiempo, repeticiones, dirección */
+}
+
+.bg-circle-2 {
+  position: absolute;
+  border-radius: 50%;
+  width: 500px;
+  height: 500px;
+  background-color: #96C0CE; /* Color fucsia para contrastar */
+  top: 0;
+  left: 0;
+  filter: blur(120px);
+  opacity: 0.4;
+  animation: floatAnimation2 25s ease-in-out infinite alternate-reverse; /* Se mueve en dirección contraria */
+}
+
+.bg-circle-3 {
+  position: absolute;
+  border-radius: 50%;
+  width: 500px;
+  height: 500px;
+  background-color: #EFE8DF; /* Color fucsia para contrastar */
+  top: 0;
+  left: 0;
+  filter: blur(110px);
+  opacity: 0.3;
+  animation: floatAnimation 30s ease-in-out infinite alternate-reverse; /* Se mueve en dirección contraria */
+}
+
+/* Definición de la animación */
+@keyframes floatAnimation {
+  0% {
+    transform: translate(0vw, 0vh); /* Esquina superior izquierda */
+  }
+  25% {
+    transform: translate(80vw, 20vh); /* Hacia la derecha */
+  }
+  50% {
+    transform: translate(10vw, 80vh); /* Hacia abajo a la izquierda */
+  }
+  75% {
+    transform: translate(70vw, 70vh); /* Hacia el centro derecha abajo */
+  }
+  100% {
+    transform: translate(0vw, 0vh); /* Regresa al inicio */
+  }
+}
+
+@keyframes floatAnimation2 {
+  0% {
+    transform: translate(0vw, 0vh); /* Esquina superior izquierda */
+  }
+  25% {
+    transform: translate(10vw, 80vh); /* Hacia la derecha */
+  }
+  50% {
+    transform: translate(80vw, 20vh); /* Hacia abajo a la izquierda */
+  }
+  75% {
+    transform: translate(70vw, 70vh); /* Hacia el centro derecha abajo */
+  }
+  100% {
+    transform: translate(0vw, 0vh); /* Regresa al inicio */
+  }
+}
+
+.header-portfolio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Centra el contenido verticalmente dentro del bubble-container */
+  gap: 0px;    /* Espacio entre la imagen y el texto */
+}
+
+.title{
+  margin: 0;
+  font-size: 3rem;
+  
+}
+
+.profile-img {
+  width: 500px;  /* Ajusta el tamaño a tu gusto */
+  height: 500px;
+  object-fit: cover;  /* Evita que la imagen se deforme */
+  
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 250;
+
+  
+}
+
+.studies{
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 100;
+
+}
+
+.button-contact{
+  padding: 5px 15px;
+  border-radius: 20px;
+  background: #D44720;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;  
+  margin-top: 30px;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+   
+}
+
+.button-contact:hover {
+  border-color: #ffffff; /* Changes from transparent to white */
+}
+
+.corner-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Para que no bloquee los clics al centro */
+  z-index: 100;
+}
+
+.corner-btn {
+  position: absolute;
+  pointer-events: auto; /* Activamos clics solo en los botones */
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.corner-btn::before {
+  content: '';
+  position: absolute;
+  width: 600px; /* Área de influencia de la luz */
+  height: 600px;
+  border-radius: 16px;
+  background: radial-gradient(
+    circle at var(--glow-x, 0%) var(--glow-y, 0%), 
+    rgba(6, 182, 212, 0.4), 
+    transparent 70%
+  );
+  opacity: var(--proximity, 0);
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity 0.2s ease-out;
+}
+
+.top-left { top: 20px; left: 20px; }
+.top-left::before {
+  top: -20px;
+  left: -20px;
+  --glow-x: 0%;
+  --glow-y: 0%;
+}
+
+ .bottom-left{
+  bottom: 20px;
+  left: 20px;
+ }
+.bottom-left::before {
+  bottom: -20px;
+  left: -20px;
+  --glow-x: 0%;
+  --glow-y: 100%;
+}
+
+.top-right { top: 40px; right: 40px; }
+.top-right::before {
+  top: -40px;
+  right: -40px;
+  --glow-x: 100%;
+  --glow-y: 0%;
+}
+
+.bottom-right { bottom: 40px; right: 40px; }
+.bottom-right::before {
+  bottom: -40px;
+  right: -40px;
+  --glow-x: 100%;
+  --glow-y: 100%;
+}
+
+.logo-hover {
+  width: 60px; /* Tamaño base fijo */
+  height: 60px;
+  opacity: var(--proximity, 0);
+  transform: scale(calc(var(--proximity, 0) * 1.3)); /* Crece hasta un 30% más */
+  margin-bottom: 5px; /* Espacio pequeño entre logo y texto */
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out; 
+  filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+}
+
+.text-button {
+  opacity: var(--proximity, 0);
+  /* Aparece desde arriba (translateY) y escala desde su borde superior */
+  transform-origin: top; 
+  transform: translateY(calc(-10px * (1 - var(--proximity, 0)))) scale(calc(var(--proximity, 0) * 1.3));
+  transition: transform 0.1s ease-out, opacity 0.1s ease-out; /* Transición suave para el movimiento */
+  filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+}
