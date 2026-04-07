@@ -162,6 +162,21 @@ z-index: 10;
   border-color: #ffffff; /* Changes from transparent to white */
 }
 
+.back-home-btn {
+  position: fixed;
+  z-index: 1000;
+  padding: 10px 20px;
+  background: rgba(212, 71, 32, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s, transform 0.2s;
+}
+
 .corner-nav {
   position: absolute;
   top: 0;
