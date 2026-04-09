@@ -1,3 +1,4 @@
+import FloatingLight from './FloatingLight';
 import { motion as Motion, AnimatePresence } from 'framer-motion'; //Importacion de animacion
 import React, { useState, useRef } from 'react' // importar el react
 import './App.css';
@@ -8,7 +9,7 @@ function App() {
   const [view, setView] = useState('home'); // 'home', 'anim', 'web', 'video', 'games'
   const containerRef = useRef(null);
 
-  // Mapping de las posiciones de los botones
+  //********************* Mapping de las posiciones de los botones*********************
   const viewConfig = {
     anim: { x: 800, y: 600 },
     web: { x: 800, y: -600 },
@@ -17,7 +18,14 @@ function App() {
     home: { x: 0, y: 0 }
   };
 
-  // Logos para transiciones 
+  //*********************Insercion de los archivos multimedia*********************
+  const projectsData = {
+    anim: [
+      { id: 1, title: "Luces animation", type: "embed", src: "src/assets/chicharron_preview.webm" }
+    ]
+  }
+
+  //********************* Logos para transiciones *********************
   const logoAssets = {
     anim: "src/assets/ae.png",
     web: "src/assets/react.webp",
@@ -25,7 +33,7 @@ function App() {
     video: "src/assets/premiere.png"
   };
 
-  //
+  //*********************Configuracion de botones*********************
   const backBtnConfig = {
     anim: { bottom: '40px', right: '40px', top: 'auto', left: 'auto' }, // Esquina Inferior Derecha
     web: { top: '40px', right: '40px', bottom: 'auto', left: 'auto' }, // Esquina Superior Derecha
@@ -33,6 +41,7 @@ function App() {
     video: { top: '40px', left: '40px', bottom: 'auto', right: 'auto' }, // Esquina Superior Izquierda
   };
 
+  //*********************Animacion para cuando se acerque el mouse al boton*********************
   const handleMouseMove = (e) => {
     if (!containerRef.current || view !== 'home') return;
 
@@ -51,14 +60,88 @@ function App() {
     });
   };
 
+  //*********************Animacion de letras*********************
+  const AnimatedText = ({ text, className }) => {
+    // Dividimos la frase en letras individuales
+    const letters = Array.from(text);
+
+    // Variantes para el contenedor (maneja el retraso entre letras)
+    const container = {
+      hidden: { opacity: 0 },
+      visible: (i = 1) => ({
+        opacity: 1,
+        transition: { staggerChildren: 0.03, delayChildren: 0.04 * i },
+      }),
+    };
+
+    // Variantes para cada letra individual (el movimiento)
+    const child = {
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          type: "spring",
+          damping: 12,
+          stiffness: 200,
+        },
+      },
+      hidden: {
+        opacity: 0,
+        y: 20, // Empiezan un poco abajo
+      },
+    };
+
+    return (
+      <Motion.div
+        style={{ display: "flex", overflow: "hidden" }}
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        className={className}
+      >
+        {letters.map((letter, index) => (
+          <Motion.span variants={child} key={index}>
+            {letter === " " ? "\u00A0" : letter}
+          </Motion.span>
+        ))}
+      </Motion.div>
+    );
+  };
+
+  //*********************Secciones*********************
+  const AnimationSection = () => (
+    <Motion.div
+      className="section-content"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+    >
+      <AnimatedText 
+      text="Motion Graphics & After Effects" 
+      className="section-title" />
+
+      <p className="section-description">
+        Exploración de ritmo, color y movimiento. Aquí verás mis trabajos de composición 2D y 3D.
+      </p>
+
+      <div className="projects-grid">
+        {/* Aquí irán tus videos de AE */}
+        <div className="video-card">Video 1</div>
+        <div className="video-card">Video 2</div>
+      </div>
+
+      <button className="special-btn">Ver Reel Completo</button>
+    </Motion.div>
+  );
+
   return (
     <main className="main-layout">
-      {/* Circles*/}
-      <div className="bg-circle"></div>
-      <div className="bg-circle-2"></div>
-      <div className="bg-circle-3"></div>
+      {/* Circles- Animando*/}
+      <FloatingLight color="#a14d26" size="400px" duration={10} />
+      <FloatingLight color="#455a64" size="300px" duration={15} />
+      <FloatingLight color="#827717" size="500px" duration={20} />
 
-      {/* Watermark Logo */}
+      {/* Logo Invisible - Animacion  */}
       <AnimatePresence mode="sync">
         {view !== 'home' && (
           <Motion.img
@@ -67,29 +150,30 @@ function App() {
             className="watermark-master"
             initial={{
               // Usamos coordenadas exactas e invertidas para eliminar el desfase
-              x: -viewConfig[view].x, 
+              x: -viewConfig[view].x,
               y: -viewConfig[view].y,
               scale: 0, //escala inicial
-              opacity: 1 //opacidad inicial
+              opacity: 0 //opacidad inicial
             }}
             animate={{
               x: 0, // Posicion Final
               y: 0,
               scale: 6, // Lower scale + Fixed CSS size = More stability. ademas escala final
-              opacity: 0.2, 
+              opacity: 0.2,
             }}
             exit={{ opacity: 0, scale: 8 }}
             transition={{
               type: "spring",
-              stiffness: 50, // Mayor tensión para que inicie de inmediato
-              damping: 25,   // Amortiguación equilibrada para evitar rebote excesivo
-              mass: 1.0,     // Menos masa = menor inercia inicial
-              restDelta: 0.001 
+              stiffness: 90, // Mayor tensión para que inicie de inmediato
+              damping: 20,   // Amortiguación equilibrada para evitar rebote excesivo
+              mass: 0.5,     // Menos masa = menor inercia inicial
+              restDelta: 0.001
             }}
           />
         )}
       </AnimatePresence>
 
+      {/* Boton Regreso Invisible - Animacion  */}
       <AnimatePresence>
         {view !== 'home' && (
           <Motion.button
@@ -107,6 +191,7 @@ function App() {
         )}
       </AnimatePresence>
 
+      {/* Navegacion HOME */}
       <Motion.div
         className="bubble-container"
         ref={containerRef}
@@ -158,16 +243,23 @@ function App() {
         </nav>
 
         <header className="header-portfolio">
-          <h1 className="title">Welcome to my Website Portfolio</h1>
-          <img src="src/assets/NicoSonreir.png" alt="Nicolas Uribe" className="profile-img" />
+          <img src="src/assets/Portada.png" alt="Nicolas Uribe" className="profile-img" />
           <h2 className="profile-name">Jaime Nicolas Uribe Arango</h2>
           <h3 className="studies">Multimedia Engineering</h3>
           <button className="button-contact">Contact Me</button>
         </header>
       </Motion.div>
 
+      <AnimatePresence mode="wait">
+        {view === 'anim' && <AnimationSection key="anim" />}
+        {/*view === 'video' && <VideoSection key="video" />*/}
+        {/* Aquí puedes seguir agregando las demás: web, games... */}
+      </AnimatePresence>
+
     </main>
   )
+
+
 }
 
 export default App
