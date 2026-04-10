@@ -223,7 +223,7 @@ z-index: 10;
   margin-left: -50px; /* Half of width to center perfectly */
   object-fit: contain; /* Prevents deformation */
   pointer-events: none; /* User can click through it */
-  z-index: 1; /* Below the bubble-container (10) */
+  z-index: 100; /* Below the bubble-container (10) */
 }
 
 .section-content {
