@@ -5,6 +5,13 @@ import AnimatedText from './AnimatedText';
 import { useMouseProximity } from './Hooks/useMouseProximity';
 import './App.css';
 
+import assetAe from './assets/ae.png';
+import assetReact from './assets/react.webp';
+import assetBlender from './assets/blender.png';
+import assetPremiere from './assets/premiere.png';
+import assetPortadaGame from './assets/Portada-Game.png';
+import assetCapturaWeb from './assets/Captura-Pagina-web.PNG';
+import assetPortada from './assets/Portada.png';
 
 function App() {
 
@@ -67,21 +74,12 @@ function App() {
     mass: 1.2
   };
 
-  //Fisica2
-  const sharedTransition2 = {
-    type: "spring",
-    stiffness: 85,
-    damping: 20,
-    mass: 0.8,
-    restDelta: 0.001
-  };
-
   //********************* Logos para transiciones *********************
   const logoAssets = {
-    anim: "src/assets/ae.png",
-    web: "src/assets/react.webp",
-    games: "src/assets/blender.png",
-    video: "src/assets/premiere.png"
+    anim: assetAe,
+    web: assetReact,
+    games: assetBlender,
+    video: assetPremiere,
   };
 
   //*********************Animacion para cuando se acerque el mouse al boton*********************
@@ -217,7 +215,7 @@ function App() {
           whileTap={{ scale: 0.98 }}
         >
           <img
-            src={"src/assets/Portada-Game.png"} // Usa la ruta de tu póster de Smash Colombia
+            src={assetPortadaGame}
             alt="Prototype Smash Colombia Poster"
             className="game-poster-img"
           />
@@ -408,7 +406,7 @@ function App() {
       >
         <div className="web-mockup-frame">
           <img
-            src="src/assets/Captura-Pagina-web.PNG"
+            src={assetCapturaWeb}
             alt="Este Portafolio"
             className="game-poster-img"
           />
@@ -560,7 +558,7 @@ function App() {
             className="corner-btn top-left"
           >
             <img
-              src="src/assets/ae.png"
+              src={assetAe}
               className="logo-hover"
               alt="AE"
               style={{ opacity: view === 'home' ? 1 : 0 }} />
@@ -572,7 +570,7 @@ function App() {
             className="corner-btn bottom-left"
           >
             <img
-              src="src/assets/react.webp"
+              src={assetReact}
               className="logo-hover"
               alt="AE"
               style={{ opacity: view === 'home' ? 1 : 0 }}
@@ -585,7 +583,7 @@ function App() {
             className="corner-btn top-right"
           >
             <img
-              src="src/assets/blender.png"
+              src={assetBlender}
               className="logo-hover"
               alt="AE"
               style={{ opacity: view === 'home' ? 1 : 0 }} />
@@ -597,7 +595,7 @@ function App() {
             className="corner-btn bottom-right"
           >
             <img
-              src="src/assets/premiere.png"
+              src={assetPremiere}
               className="logo-hover"
               alt="AE"
               style={{ opacity: view === 'home' ? 1 : 0 }} />
@@ -607,7 +605,7 @@ function App() {
         </nav>
 
         <header className="header-portfolio">
-          <img src="src/assets/Portada.png" alt="Nicolas Uribe" className="profile-img" />
+          <img src={assetPortada} alt="Nicolas Uribe" className="profile-img" />
           <h2 className="profile-name">Jaime Nicolas Uribe Arango</h2>
           <h3 className="studies">Multimedia Engineering</h3>
           <button
