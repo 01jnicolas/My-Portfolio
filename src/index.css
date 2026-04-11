@@ -116,6 +116,9 @@ z-index: 10;
   font-weight: bold;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: background 0.3s, transform 0.2s;
+
+  width: fit-content; 
+  white-space: nowrap;
 }
 
 .corner-nav {
@@ -223,8 +226,105 @@ z-index: 10;
   margin-left: -50px; /* Half of width to center perfectly */
   object-fit: contain; /* Prevents deformation */
   pointer-events: none; /* User can click through it */
-  z-index: 100; /* Below the bubble-container (10) */
+  z-index: 50; /* Below the bubble-container (10) */
 }
+
+/* =========================================
+   CONTACT MODAL STYLES
+   ========================================= */
+
+.contact-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* Opacidad 0.5 solicitada */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000; /* Por encima de todo */
+  backdrop-filter: blur(5px);
+}
+
+.contact-modal {
+  background: rgba(30, 30, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  padding: 3rem;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+.close-contact-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-contact-btn:hover {
+  color: #d44720; /* Tu naranja */
+}
+
+.modal-title {
+  color: #d44720;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.contact-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-item .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #d44720;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.contact-item .value {
+  font-size: 1.1rem;
+  color: white;
+  text-decoration: none;
+  margin-top: 0.2rem;
+}
+
+.contact-item a.value:hover {
+  text-decoration: underline;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+/* Secciones*/
 
 .section-content {
   position: absolute;
@@ -232,11 +332,13 @@ z-index: 10;
   left: 0;
   width: 100vw;       /* Ocupa todo el ancho */
   height: 100vh;      /* Ocupa todo el alto */
+  margin-top: -80px;
   z-index: 20;
   display: flex;          /* Volvemos el contenedor un Flexbox */
   flex-direction: column; /* Apilamos los elementos uno bajo otro */
   align-items: center;    /* CENTRA TODO HORIZONTALMENTE */
-  text-align: center;     /* Centra el texto de los párrafos */
+  text-align: center;
+  z-index: 80;     /* Centra el texto de los párrafos */
 }
 
 .section-title {
@@ -259,4 +361,279 @@ z-index: 10;
 .section-title span:hover {
   color: #00d2ff; /* Color After Effects */
   transform: translateY(-5px) scale(1.1);
+}
+
+/* =========================================
+   ESTILOS DE LA CUADRÍCULA DE VIDEOS
+   ========================================= */
+
+.section-description {
+  margin-bottom: 40px;
+  font-size: 1.5rem;
+  color: #cccccc;
+  max-width: 600px;
+}
+
+/* Grid de 3x2 */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas del mismo ancho */
+  gap: 1px; /* Espacio entre los videos */
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Tarjeta del video pequeño */
+.video-card {
+  position: relative;
+  width: 85%;
+  aspect-ratio: 9 / 16; /* Mantiene la proporción clásica de video */
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+}
+
+.video-thumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  z-index: 90; /* Crucial para que el hover no se interrumpa */
+}
+
+/* =========================================
+   ESTILOS DEL REPRODUCTOR PANTALLA COMPLETA
+   ========================================= */
+
+/* El fondo con opacidad 0.5 que pediste */
+.fullscreen-video-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* El color oscuro con opacidad 0.6 */
+  background: rgba(20, 10, 5, 0.6); 
+  backdrop-filter: blur(8px); /* Desenfoque elegante estilo Apple */
+  z-index: 2000; /* Asegura que tape todo, incluso el botón de regresar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* El contenedor del video grande */
+.fullscreen-video-wrapper {
+  position: relative;
+  width: 80vw;
+  max-width: 1200px;
+  /*aspect-ratio: 16 / 9;*/
+  background: black;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
+
+.fullscreen-video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  outline: none;
+}
+
+/* Botón de cerrar la pantalla completa */
+.close-video-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.close-video-btn:hover {
+  background: #D44720;
+  transform: scale(1.1);
+}
+
+/* =========================================
+   BOTÓN DE BEHANCE
+   ========================================= */
+.behance-btn {
+  margin-top: 6px; /* Separación de la cuadrícula */
+  margin-bottom: 50px;
+  padding: 12px 35px;
+  background: rgba(212, 71, 32, 0.9); /* Tu naranja característico */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-decoration: none; /* Quita la raya fea de los enlaces <a> */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: inline-block;
+}
+
+.behance-btn:hover {
+  background: rgba(255, 100, 50, 1);
+  box-shadow: 0 6px 20px rgba(212, 71, 32, 0.5);
+}
+
+/* =========================================
+   ESTILOS ESPECÍFICOS SECCIÓN VIDEOJUEGOS
+   ========================================= */
+
+.games-section-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.game-poster-container {
+  margin-top: 2rem; /* Qué tan lejos está del título */
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-poster-link {
+  display: inline-block;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5); /* Sombra elegante detrás del póster */
+  border-radius: 12px;
+  overflow: hidden; /* Asegura que la imagen no se salga de las esquinas redondeadas */
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.game-poster-img {
+  width: 30vw; /* Toma gran parte de la pantalla */
+  max-width: 900px; /* Pero tiene un límite para monitores grandes */
+  height: auto;
+  display: block; /* Quita un espacio residual que a veces dejan las imágenes */
+  object-fit: contain;
+}
+
+.games-cta-container {
+  margin-top: 3rem; /* Espacio entre el póster y el botón */
+  margin-bottom: 5rem;
+  z-index: 15; 
+  display: flex;
+  justify-content: center;
+}
+
+.game-description {
+  margin-top: 2rem; /* Espacio entre el póster y el texto */
+  margin-bottom: 0; /* Anulamos el margen inferior porque el botón ya tiene el suyo */
+  text-align: center;
+  /* El max-width, color y font-size los está heredando automáticamente de .section-description */
+}
+
+/* =========================================
+   SECCIÓN EDIT VIDEOS (Layout Mixto)
+   ========================================= */
+
+.edit-videos-layout {
+  display: flex;
+  flex-direction: row; /* Coloca la columna izquierda y derecha lado a lado */
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px; /* Separación entre el bloque horizontal y el vertical */
+  width: 100%;
+  max-width: 1100px;
+  margin: 2rem auto 4rem auto;
+
+  height: auto; /* Limitamos la altura total al 65% de la pantalla */
+}
+
+/* Columna Izquierda (Videos 16:9) */
+.horizontal-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1; /* Los horizontales ahora pedirán más espacio ancho */
+  justify-content: center;
+}
+
+/* Columna Derecha (Videos 9:16) */
+.vertical-column {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  flex: 2; /* Bajamos un poco el peso para que no "aplasten" a los horizontales */
+  justify-content: center;
+}
+
+/* Base de la tarjeta de video para esta sección */
+.edit-video-card {
+  position: relative;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #2a2a2a;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Forzar proporciones */
+.card-landscape { 
+  width: 100%; /* Que use todo el ancho de su columna */
+  aspect-ratio: 16 / 9;
+  height: auto;
+ }
+.card-portrait { 
+  height: 100%; /* Que use todo el alto limitado de la columna */
+  width: auto;  /* Que el ancho se ajuste para mantener la proporción 2:3 */
+  aspect-ratio: 9 / 16;
+  max-height: 60vh; 
+}
+
+/* =========================================
+   MODIFICADORES DEL REPRODUCTOR GIGANTE
+   ========================================= */
+/* Quitamos el height y aspect-ratio fijo de tu antigua clase base */
+.fullscreen-video-wrapper {
+  position: relative;
+  width: 90vw; 
+  max-width: 1200px;
+  background: black;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+}
+
+/* Le decimos cómo comportarse según el video que abriste */
+.modal-landscape {
+  height: 80vh; /* Un poco menos alto para que no se corte en monitores anchos */
+  aspect-ratio: 16 / 9;
+}
+
+.modal-portrait {
+  height: 90vh; /* Usa toda la altura posible */
+  width: auto; /* El ancho se calcula solo */
+  aspect-ratio: 9 / 16;
 }

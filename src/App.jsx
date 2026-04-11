@@ -10,6 +10,7 @@ function App() {
 
   const [view, setView] = useState('home'); // 'home', 'anim', 'web', 'video', 'games'
   const containerRef = useRef(null);
+  const [isContactOpen, setIsContactOpen] = useState(false);
 
   // 1. NUEVO: La memoria fotográfica del último botón tocado
   const lastClicked = useRef('anim');
@@ -42,6 +43,21 @@ function App() {
     home: { x: 0, y: 0 }
   };
 
+  /*const originBtnExitConfig = {
+    anim: { y: "-120vh" },  // Viaja hacia la parte superior
+    games: { y: "-120vh" }, // Viaja hacia la parte superior
+    web: { y: "120vh" },    // Viaja hacia la parte inferior
+    home: { y: 0 }
+  };*/
+
+  const backBtnConfig = {
+    // x: positivo es derecha, y: positivo es abajo
+    anim: { x: "40vw", y: "40vh" },  // Esquina Inferior Derecha
+    web: { x: "40vw", y: "-40vh" }, // Esquina Superior Derecha
+    games: { x: "-40vw", y: "40vh" },  // Esquina Inferior Izquierda
+    video: { x: "-42vw", y: "-42vh" }, // Esquina Superior Izquierda (alineado con el logo)
+  };
+
   // ********************* Físicas de Animación Global *********************
   // Fisica1
   const sharedTransition = {
@@ -68,40 +84,361 @@ function App() {
     video: "src/assets/premiere.png"
   };
 
-  //*********************Configuracion de botones*********************
-  const backBtnConfig = {
-    anim: { bottom: '40px', right: '40px', top: 'auto', left: 'auto' }, // Esquina Inferior Derecha
-    web: { top: '40px', right: '40px', bottom: 'auto', left: 'auto' }, // Esquina Superior Derecha
-    games: { bottom: '40px', left: '40px', top: 'auto', right: 'auto' }, // Esquina Inferior Izquierda
-    video: { top: '40px', left: '40px', bottom: 'auto', right: 'auto' }, // Esquina Superior Izquierda
-  };
-
   //*********************Animacion para cuando se acerque el mouse al boton*********************
   const handleMouseMove = useMouseProximity(containerRef, view);
 
-  //*********************Secciones*********************
-  const AnimationSection = () => (
+  //*********************Seccione Animacion*********************
+  const animationVideos = [
+    { id: 1, title: "Reel 2026", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775865520/TPJwyCZ2BKV_576_nr6zst.mp4", orientation: "portrait" },
+    { id: 2, title: "Proyecto 2", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775864795/Video_vqlcsu.mp4", orientation: "portrait" }, // Repetido para llenar la muestra
+    { id: 3, title: "Proyecto 3", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775864944/VideoOraculo3_pkouvg.mp4",orientation: "portrait" }, // Repetido para llenar la muestra
+  ];
+
+  const AnimationSection = () => {
+    const [selectedVideo, setSelectedVideo] = useState(null);
+
+    return (
+      <Motion.div
+        className="section-content"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+      >
+        <AnimatedText
+          text="Motion Graphics & After Effects"
+          className="section-title" />
+
+        {/* LA CUADRÍCULA (GRID) */}
+        <div className="projects-grid">
+          {animationVideos.map((video) => (
+            <Motion.div
+              key={video.id}
+              layoutId={`video-container-${video.id}`} // MAGIA: Conecta el cuadrito con la pantalla completa
+              className="video-card"
+              onClick={() => setSelectedVideo(video)}
+              // MODIFICACIÓN AQUÍ: Animación suave de entrada para cada tarjeta de video
+              initial={{
+                opacity: 0,
+                scale: 0.9
+              }} // Comienza totalmente invisible
+              animate={{
+                opacity: 1,
+                scale: 1
+              }}  // Se vuelve visible suavemente al cargar la sección
+              transition={{ duration: 1.5, ease: "easeOut" }} // Duración (1.5 segundos) y suavidad de la transición. Aumenta 'duration' si quieres que sea aún más suave y lenta.
+              whileHover={{ scale: 1.05 }} // Se expande un poquitico al pasar el mouse
+              whileTap={{ scale: 0.95 }}
+            >
+              {/* Video en miniatura: Sin controles, mudo, hace auto-play al pasar el mouse */}
+              <video
+                src={video.url}
+                autoPlay    // 1. Le dice que arranque solo
+                muted={true}       // 2. VITAL: Si no es mudo, Chrome/Safari lo bloquean
+                loop        // 3. Para que se repita infinitamente
+                playsInline // 4. Evita que el video se abra en pantalla completa en móviles
+              />
+            </Motion.div>
+          ))}
+        </div>
+
+        {/* BOTÓN DE BEHANCE */}
+        <Motion.a
+          href="https://www.behance.net/JNicolasUA"
+          target="_blank"             // Abre en una nueva pestaña
+          rel="noopener noreferrer"   // Seguridad estándar de React para enlaces externos
+          className="behance-btn"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }} // Entra un poquito después que los videos
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          View more on Behance
+        </Motion.a>
+
+        {/* MODAL DE PANTALLA COMPLETA */}
+        <AnimatePresence>
+          {selectedVideo && (
+            <Motion.div
+              className="fullscreen-video-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedVideo(null)} // Si haces clic por fuera, se cierra
+            >
+              <Motion.div
+                layoutId={`video-container-${selectedVideo.id}`} // MAGIA: Le dice que crezca desde el cuadrito
+                className={`fullscreen-video-wrapper ${selectedVideo.orientation === 'landscape' ? 'modal-landscape' : 'modal-portrait'}`}
+                onClick={(e) => e.stopPropagation()} // Evita que se cierre al hacer clic en los controles del video
+              >
+                {/* Video gigante: Con controles, arranca automáticamente */}
+                <video
+                  src={selectedVideo.url}
+                  className="fullscreen-video-player"
+                  controls
+                  autoPlay
+                />
+                <button className="close-video-btn" onClick={() => setSelectedVideo(null)}>
+                  ✕
+                </button>
+              </Motion.div>
+            </Motion.div>
+          )}
+        </AnimatePresence>
+      </Motion.div>
+    );
+  };
+  //*********************Seccione Videojuegos*********************
+  const GamesSection = () => (
     <Motion.div
-      className="section-content"
+      className="section-content games-section-container"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+    >
+      {/* TÍTULO */}
+      <AnimatedText
+        text="Developer Videogames"
+        className="section-title" />
+
+      {/* PÓSTER DEL PROYECTO */}
+      <Motion.div
+        className="game-poster-container"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.8 }}
+      >
+        <Motion.a
+          href={"https://www.behance.net/gallery/242348059/Prototype-Smash-Bross"} // Usa la URL de Behance que definimos
+          target="_blank"
+          rel="noopener noreferrer"
+          className="game-poster-link"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <img
+            src={"src/assets/Portada-Game.png"} // Usa la ruta de tu póster de Smash Colombia
+            alt="Prototype Smash Colombia Poster"
+            className="game-poster-img"
+          />
+        </Motion.a>
+      </Motion.div>
+
+      {/* NUEVO: DESCRIPCIÓN DEL PROYECTO */}
+      <Motion.p
+        className="section-description game-description"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.8 }}
+      >
+        An academic project developed for educational purposes. "Smash Bross" is a prototype exploring 3D modeling and character design—featuring the fighter "Chicharrón"—alongside the creation of environments and architectural assets inspired by Colombia.
+      </Motion.p>
+
+      {/* BOTÓN DE BEHANCE */}
+      <Motion.div
+        className="games-cta-container"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.8 }}
+      >
+        <Motion.a
+          href={"https://www.behance.net/gallery/242348059/Prototype-Smash-Bross"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="behance-btn"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          View more on Behance
+        </Motion.a>
+      </Motion.div>
+    </Motion.div>
+  );
+
+  //********************* Datos de la Sección Edit Videos *********************
+  const editVideosHorizontal = [
+    // Cambiamos 'url' por 'videoId' y agregamos type: 'youtube'
+    { id: 'eh1', type: 'youtube', videoId: "i__4WTdAsd0", orientation: "landscape" },
+    { id: 'eh2', type: 'youtube', videoId: "62jw8Lrssmg", orientation: "landscape" },
+  ];
+
+  // Los verticales los dejamos intactos con tu mp4 de Cloudinary
+  const editVideosVertical = [
+    { id: 'ev1', type: 'mp4', url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775775629/reel2_1_elvh2b.mp4", orientation: "portrait" },
+    { id: 'ev2', type: 'mp4', url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775775629/reel3_1_rlqxxb.mp4", orientation: "portrait" },
+  ];
+
+  const EditVideoSection = () => {
+    const [selectedVideo, setSelectedVideo] = useState(null);
+
+    return (
+      <Motion.div
+        className="section-content"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+      >
+        {/* TÍTULO Y DESCRIPCIÓN */}
+        <AnimatedText text="Edit Videos" className="section-title" />
+
+        {/* EL LAYOUT MAESTRO */}
+        <div className="edit-videos-layout">
+
+          {/* Columna Izquierda (Horizontales - Miniaturas) */}
+          <div className="horizontal-column">
+            {editVideosHorizontal.map((video) => (
+              <Motion.div
+                key={video.id}
+                layoutId={`edit-video-${video.id}`}
+                className="edit-video-card card-landscape"
+                onClick={() => setSelectedVideo(video)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {/* AQUÍ VA LA MINIATURA (Usa "video.videoId", NO "selectedVideo") */}
+                {video.type === 'youtube' ? (
+                  <iframe
+                    className="video-thumbnail"
+                    src={`https://www.youtube.com/embed/${video.videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video.videoId}`}
+                    style={{ border: 'none', pointerEvents: 'none' }}
+                    allow="autoplay"
+                  />
+                ) : (
+                  <video src={video.url} autoPlay muted={true} loop playsInline className="video-thumbnail" />
+                )}
+              </Motion.div>
+            ))}
+          </div>
+
+          {/* Columna Derecha (Verticales - Miniaturas) */}
+          <div className="vertical-column">
+            {editVideosVertical.map((video) => (
+              <Motion.div
+                key={video.id}
+                layoutId={`edit-video-${video.id}`}
+                className="edit-video-card card-portrait"
+                onClick={() => setSelectedVideo(video)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <video src={video.url} autoPlay muted={true} loop playsInline className="video-thumbnail" />
+              </Motion.div>
+            ))}
+          </div>
+
+        </div>
+
+        {/* BOTÓN DE BEHANCE */}
+        <Motion.a
+          href="https://www.behance.net/JNicolasUA"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="behance-btn"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          View more on Behance
+        </Motion.a>
+
+        {/* MODAL INTELIGENTE (Reproductor Gigante) */}
+        <AnimatePresence>
+          {selectedVideo && (
+            <Motion.div
+              className="fullscreen-video-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedVideo(null)}
+            >
+              <Motion.div
+                layoutId={`edit-video-${selectedVideo.id}`}
+                className={`fullscreen-video-wrapper ${selectedVideo.orientation === 'landscape' ? 'modal-landscape' : 'modal-portrait'}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* AQUÍ VA EL REPRODUCTOR GIGANTE (Usa "selectedVideo.videoId") */}
+                {selectedVideo.type === 'youtube' ? (
+                  <iframe
+                    key={selectedVideo.videoId}
+                    className="fullscreen-video-player"
+                    src={`https://www.youtube.com/embed/${selectedVideo.videoId}?autoplay=1`}
+                    title="YouTube video player"
+                    style={{ border: 'none', width: '100%', height: '100%' }}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video src={selectedVideo.url} className="fullscreen-video-player" controls autoPlay />
+                )}
+                <button className="close-video-btn" onClick={() => setSelectedVideo(null)}>✕</button>
+              </Motion.div>
+            </Motion.div>
+          )}
+        </AnimatePresence>
+      </Motion.div>
+    );
+  };
+
+  //********************* Sección Web Design *********************
+  const WebSection = () => (
+    <Motion.div
+      className="section-content web-section-container"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
     >
       <AnimatedText
-        text="Motion Graphics & After Effects"
+        text="Web Development"
         className="section-title" />
 
-      <p className="section-description">
-        Exploración de ritmo, color y movimiento. Aquí verás mis trabajos de composición 2D y 3D.
-      </p>
+      {/* VISTA PREVIA DE ESTE MISMO SITIO */}
+      <Motion.div
+        className="game-poster-container"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.8 }}
+      >
+        <div className="web-mockup-frame">
+          <img
+            src="src/assets/Captura-Pagina-web.PNG"
+            alt="Este Portafolio"
+            className="game-poster-img"
+          />
+        </div>
+      </Motion.div>
 
-      <div className="projects-grid">
-        {/* Aquí irán tus videos de AE */}
-        <div className="video-card">Video 1</div>
-        <div className="video-card">Video 2</div>
-      </div>
+      {/* DESCRIPCIÓN TÉCNICA */}
+      <Motion.p
+        className="section-description game-description"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
+        <strong>Interactive Portfolio 2026:</strong> My first deep dive into Frontend Engineering.
+        Developed from scratch using <strong>React</strong> and <strong>Framer Motion</strong>,
+        focusing on creating a high-performance multimodal experience with smooth
+        physics-based transitions.
+      </Motion.p>
 
-      <button className="special-btn">Ver Reel Completo</button>
+      {/* BOTÓN AL REPOSITORIO (Para mostrar que sabes programar) */}
+      <Motion.div className="games-cta-container">
+        <Motion.a
+          href="https://github.com/01jnicolas/My-Portfolio" // Cuando lo subas a GitHub
+          target="_blank"
+          className="behance-btn"
+          whileHover={{ scale: 1.05 }}
+        >
+          View Code on GitHub
+        </Motion.a>
+      </Motion.div>
     </Motion.div>
   );
 
@@ -168,16 +505,35 @@ function App() {
       <AnimatePresence>
         {view !== 'home' && (
           <Motion.button
-            key="back-button" // Key para que AnimatePresence rastree el mismo elemento
+            key="back-button"
             className="back-home-btn"
             aria-label="Volver al inicio"
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1, ...backBtnConfig[view] }}
-            exit={{ opacity: 0, scale: 0.5 }}
-            transition={{ type: "spring", stiffness: 150, damping: 20 }}
+            style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              zIndex: 1000,
+              whiteSpace: 'nowrap' // VITAL: Evita que el texto se rompa en el viaje
+            }}
+
+            // NACE: En el centro total
+            initial={{ opacity: 0, scale: 0.5, x: "-50%", y: "-50%" }}
+
+            // VIAJA: A la esquina sumando el desplazamiento al centrado (-50%)
+            animate={{
+              opacity: 1,
+              scale: 1,
+              x: `calc(-50% + ${backBtnConfig[view].x})`,
+              y: `calc(-50% + ${backBtnConfig[view].y})`
+            }}
+
+            // REGRESA: Al centro antes de morir
+            exit={{ opacity: 0, scale: 0.5, x: "-50%", y: "-50%" }}
+
+            transition={sharedTransition}
             onClick={() => handleChangeView('home')}
           >
-            ← Volver al Home
+            ← Back to Home
           </Motion.button>
         )}
       </AnimatePresence>
@@ -207,9 +563,8 @@ function App() {
               src="src/assets/ae.png"
               className="logo-hover"
               alt="AE"
-              // AQUÍ EL TRUCO: Si la vista no es home, se vuelve invisible al instante
               style={{ opacity: view === 'home' ? 1 : 0 }} />
-            <span className="text-button">Animación</span>
+            <span className="text-button">Animation</span>
           </button>
 
           <button
@@ -255,14 +610,63 @@ function App() {
           <img src="src/assets/Portada.png" alt="Nicolas Uribe" className="profile-img" />
           <h2 className="profile-name">Jaime Nicolas Uribe Arango</h2>
           <h3 className="studies">Multimedia Engineering</h3>
-          <button className="button-contact">Contact Me</button>
+          <button
+            className="button-contact"
+            onClick={() => setIsContactOpen(true)}
+
+          >Contact Me</button>
         </header>
       </Motion.div>
 
       <AnimatePresence mode="wait">
         {view === 'anim' && <AnimationSection key="anim" />}
-        {/*view === 'video' && <VideoSection key="video" />*/}
-        {/* Aquí puedes seguir agregando las demás: web, games... */}
+        {view === 'games' && <GamesSection key="games" />}
+        {view === 'video' && <EditVideoSection key="video" />}
+        {view === 'web' && <WebSection key="web" />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isContactOpen && (
+          <Motion.div
+            className="contact-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsContactOpen(false)} // Cierra al dar clic afuera
+          >
+            <Motion.div
+              className="contact-modal"
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()} // Evita que se cierre al tocar el cuadro
+            >
+              <button className="close-contact-btn" onClick={() => setIsContactOpen(false)}>✕</button>
+
+              <h2 className="modal-title">Get in Touch</h2>
+              <p className="modal-subtitle">I'm currently looking for new opportunities. Let's build something amazing together!</p>
+
+              <div className="contact-info-list">
+                <div className="contact-item">
+                  <span className="label">Email:</span>
+                  <a href="mailto:01jnicolas@gmail.com" className="value">01jnicolas@gmail.com</a>
+                </div>
+                <div className="contact-item">
+                  <span className="label">Location:</span>
+                  <span className="value">Colombia, Antioquia (Colombia)</span>
+                </div>
+                <div className="contact-item">
+                  <span className="label">LinkedIn:</span>
+                  <a href="www.linkedin.com/in/jnicolasua" target="_blank" className="value">www.linkedin.com/in/jnicolasua</a>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <p>Available for freelance and full-time roles.</p>
+              </div>
+            </Motion.div>
+          </Motion.div>
+        )}
       </AnimatePresence>
 
     </main>
