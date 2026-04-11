@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 
 const AnimatedText = ({ text, className }) => {
   // 1. Dividimos la frase en letras individuales
@@ -35,7 +35,7 @@ const AnimatedText = ({ text, className }) => {
 
   // 4. El Return: Renderizamos el contenedor y mapeamos las letras
   return (
-    <motion.div 
+    <Motion.div 
       className={className} 
       variants={container} 
       initial="hidden" 
@@ -43,13 +43,13 @@ const AnimatedText = ({ text, className }) => {
     >
       {/* El método .map() itera sobre cada letra de tu frase */}
       {letters.map((letter, index) => (
-        <motion.span variants={child} key={index}>
+        <Motion.span variants={child} key={index}>
           {/* TRUCO CLAVE: Si la letra es un espacio vacío, usamos "\u00A0" 
               para que el navegador no lo ignore y junte las palabras */}
           {letter === " " ? "\u00A0" : letter}
-        </motion.span>
+        </Motion.span>
       ))}
-    </motion.div>
+    </Motion.div>
   );
 };
 
