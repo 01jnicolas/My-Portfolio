@@ -19,10 +19,10 @@ function App() {
   const containerRef = useRef(null);
   const [isContactOpen, setIsContactOpen] = useState(false);
 
-  // 1. NUEVO: La memoria fotográfica del último botón tocado
+  // 1. La memoria fotográfica del último botón tocado
   const lastClicked = useRef('anim');
 
-  // 2. NUEVO: Función inteligente para cambiar de vista sin olvidar
+  // 2. Función inteligente para cambiar de vista sin olvidar
   const handleChangeView = (newView) => {
     if (newView !== 'home') {
       lastClicked.current = newView; // Guarda el nombre de la esquina antes de viajar
@@ -50,19 +50,12 @@ function App() {
     home: { x: 0, y: 0 }
   };
 
-  /*const originBtnExitConfig = {
-    anim: { y: "-120vh" },  // Viaja hacia la parte superior
-    games: { y: "-120vh" }, // Viaja hacia la parte superior
-    web: { y: "120vh" },    // Viaja hacia la parte inferior
-    home: { y: 0 }
-  };*/
-
   const backBtnConfig = {
-    // x: positivo es derecha, y: positivo es abajo
-    anim: { x: "40vw", y: "40vh" },  // Esquina Inferior Derecha
-    web: { x: "40vw", y: "-40vh" }, // Esquina Superior Derecha
-    games: { x: "-40vw", y: "40vh" },  // Esquina Inferior Izquierda
-    video: { x: "-42vw", y: "-42vh" }, // Esquina Superior Izquierda (alineado con el logo)
+    // Usamos el 32% del ancho y 40% del alto. Es la "proporción áurea" para que nunca toque los bordes.
+    anim: { x: "32vw", y: "40vh" },  
+    web: { x: "32vw", y: "-40vh" }, 
+    games: { x: "-32vw", y: "40vh" },  
+    video: { x: "-32vw", y: "-40vh" }, 
   };
 
   // ********************* Físicas de Animación Global *********************
@@ -87,9 +80,9 @@ function App() {
 
   //*********************Seccione Animacion*********************
   const animationVideos = [
-    { id: 1, title: "Reel 2026", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775865520/TPJwyCZ2BKV_576_nr6zst.mp4", orientation: "portrait" },
+    { id: 1, title: "Proyecto 1", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775865520/TPJwyCZ2BKV_576_nr6zst.mp4", orientation: "portrait" },
     { id: 2, title: "Proyecto 2", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775864795/Video_vqlcsu.mp4", orientation: "portrait" }, // Repetido para llenar la muestra
-    { id: 3, title: "Proyecto 3", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775864944/VideoOraculo3_pkouvg.mp4",orientation: "portrait" }, // Repetido para llenar la muestra
+    { id: 3, title: "Proyecto 3", url: "https://res.cloudinary.com/did2cfvzb/video/upload/v1775864944/VideoOraculo3_pkouvg.mp4", orientation: "portrait" }, // Repetido para llenar la muestra
   ];
 
   const AnimationSection = () => {
@@ -500,47 +493,53 @@ function App() {
       </AnimatePresence>
 
       {/* Boton Regreso Invisible - Animacion  */}
-      <AnimatePresence>
+     <AnimatePresence>
         {view !== 'home' && (
-          <Motion.button
-            key="back-button"
-            className="back-home-btn"
-            aria-label="Volver al inicio"
-            style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              zIndex: 1000,
-              whiteSpace: 'nowrap' // VITAL: Evita que el texto se rompa en el viaje
-            }}
-
-            // NACE: En el centro total
-            initial={{ opacity: 0, scale: 0.5, x: "-50%", y: "-50%" }}
-
-            // VIAJA: A la esquina sumando el desplazamiento al centrado (-50%)
-            animate={{
-              opacity: 1,
-              scale: 1,
-              x: `calc(-50% + ${backBtnConfig[view].x})`,
-              y: `calc(-50% + ${backBtnConfig[view].y})`
-            }}
-
-            // REGRESA: Al centro antes de morir
-            exit={{ opacity: 0, scale: 0.5, x: "-50%", y: "-50%" }}
-
-            transition={sharedTransition}
-            onClick={() => handleChangeView('home')}
-          >
-            ← Back to Home
-          </Motion.button>
+          <div style={{
+            position: 'fixed',
+            inset: 0, /* Atajo pro para top:0, left:0, right:0, bottom:0 */
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            pointerEvents: 'none', /* Hace que este fondo invisible no bloquee los clics de tu sitio */
+            zIndex: 1000
+          }}>
+            <Motion.button
+              key="back-button"
+              className="back-home-btn"
+              style={{ 
+                pointerEvents: 'auto', /* Reactiva el clic solo en el botón */
+                whiteSpace: 'nowrap'
+              }}
+              /* Nace en el centro absoluto sin matemáticas raras */
+              initial={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                x: backBtnConfig[view].x,
+                y: backBtnConfig[view].y
+              }}
+              exit={{ opacity: 0, scale: 0.5, x: 0, y: 0 }}
+              transition={sharedTransition}
+              onClick={() => handleChangeView('home')}
+            >
+              <span className="back-full">← Back to Home</span>
+              <span className="back-short">← Back</span>
+            </Motion.button>
+          </div>
         )}
       </AnimatePresence>
-
+      
       {/* Navegacion HOME */}
       <Motion.div
         className="bubble-container"
         ref={containerRef}
-        onMouseMove={handleMouseMove}
+        onMouseMove={(e) => {
+          // Solo ejecutamos el radar de proximidad si es una pantalla grande (escritorio)
+          if (window.innerWidth > 768) {
+            handleMouseMove(e);
+          }
+        }}
         initial={false}
         animate={{
           x: bubbleExitConfig[view]?.x ?? 0,

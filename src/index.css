@@ -637,3 +637,208 @@ z-index: 10;
   width: auto; /* El ancho se calcula solo */
   aspect-ratio: 9 / 16;
 }
+
+.back-short { display: none; }
+.back-full { display: inline; }
+
+
+
+/* =========================================
+   📱 RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+   ========================================= */
+
+/* Reglas para pantallas menores a 768px (Celulares típicos) */
+@media (max-width: 768px) {
+  
+  /* 1. Arreglamos el contenedor del Header para que no se desborde */
+  .header-portfolio {
+    position: absolute;
+    top: 50%; /* SUBIMOS EL CENTRO: Del 50% al 42% para compensar el peso visual */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    margin: 0; /* Aseguramos que no haya márgenes externos */
+  }
+
+  /* 2. Hacemos que la foto de perfil se encoja inteligentemente */
+  .profile-img {
+    width: 450px; /* Un tamaño base más pequeño */
+    max-width: 70vw; /* NUNCA será más ancha que la mitad del celular */
+    height: auto; /* Mantiene la proporción sin aplastarse */
+    margin-bottom: 1rem;
+  }
+
+  /* 3. Achicamos los textos para que quepan en la pantalla vertical */
+  .profile-name {
+    font-size: 1.8rem;
+    line-height: 1.2;
+    margin: 0.5rem 0; /* Arriba y abajo 0.5, lados 0 */
+    width: 100%;      /* Que ocupe todo el ancho disponible para poder centrar el texto */
+    text-align: center; /* ESTO centra el texto adentro */
+  }
+
+  .studies {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+    margin: 0.5rem 0;
+  
+  }
+
+  /* 4. El contenedor principal (Burbuja) para que no haga scroll horizontal */
+  .bubble-container {
+    width: 80vw;
+    height: 90vh;
+    overflow: hidden; /* Corta cualquier cosa que intente salirse de la pantalla */
+  }
+
+  /* 5. El botón de contacto*/
+  .button-contact {
+    max-width: 40vw; 
+    height: auto; 
+    display: block; /* Lo convierte en una caja independiente */
+    margin: 0 auto 1rem auto; /* Arriba 0, Izq/Der AUTO (para centrar), Abajo 1rem */
+  
+  }
+
+  /* 6. Iconos de navegacion*/
+  .corner-btn {
+    width: 85px; /* Un poco más ancho para que quepa el texto */
+    height: auto; /* Que el alto se adapte al logo + texto */
+
+    /* ASEGURAMOS QUE EL FONDO SEA INVISIBLE */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transform: scale(1) translate(0, 0) !important;
+    opacity: 1 !important;
+    filter: grayscale(0) !important;
+  }
+
+  /* 7. LOGOS  */
+  .logo-hover {
+    width: 35px; 
+    height: 35px;
+    object-fit: contain; 
+    transform: scale(1) !important;
+    margin-bottom: 6px; /* Separación exacta entre logo y texto */
+  }
+
+  /* 8. TEXTOS VISIBLES  */
+  .text-button {
+    display: block !important; 
+    opacity: 1 !important; 
+    visibility: visible !important; 
+    
+    /* ESTO ES NUEVO: Reseteamos cualquier posición rara del escritorio */
+    position: static !important; 
+    width: auto !important;
+    height: auto !important;
+    transform: none !important; 
+    
+    font-size: 0.70rem !important; /* Ligeramente más grande para asegurar que se vea */
+    color: #ffffff !important; /* Forzamos blanco puro */
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    text-align: center;
+    white-space: nowrap; 
+    margin-top: 5px !important; /* Aseguramos la separación aquí */
+    line-height: 1 !important;
+    z-index: 100 !important; /* Evita que "Edit Videos" se rompa en dos líneas */
+  }
+
+  /* 9. ALINEACIÓN EXACTA EN LAS ESQUINAS */
+  /* Ajustamos los márgenes para que se sientan simétricos y clavados en las esquinas */
+  .top-left { top: 20px; left: 10px; }
+  .top-right { top: 20px; right: 10px; }
+  .bottom-left { bottom: 20px; left: 10px; }
+  .bottom-right { bottom: 20px; right: 10px; }
+
+
+/*Logo en marcad e agua*/
+  .watermark-master {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+
+    /* Tamaños ajustados para el celular */
+    width: 40vw; /* 40% del ancho de la pantalla */
+    max-width: 50px; /* Límite para que no se vea gigante */
+    height: auto;
+    object-fit: contain;
+  }
+  .section-title{
+    font-size: 1.8rem; /* Bajamos el tamaño a algo amigable para el celular */
+    margin-top: 5rem; /* Quitamos el margen gigante de 10rem del escritorio */
+    margin-bottom: 1rem;
+    padding: 0 20px; /* Aire a los lados para que el texto no toque el vidrio del celular */
+    
+    width: 100%;
+    text-align: center;
+    line-height: 1.2;
+    
+    /* VITAL: Si hay una palabra muy larga, obliga a cortarla en vez de desbordar la pantalla */
+    word-wrap: break-word; 
+    white-space: normal;
+    margin-top: 18rem;
+
+  }
+
+  /* =========================================
+     AJUSTES EXCLUSIVOS PARA SECCIÓN GAMES (MÓVIL)
+     ========================================= */
+  
+  /* 1. Subimos SOLO la sección de juegos */
+  .games-section-container {
+    margin-top: -12rem !important; /* El valor que descubriste que funciona */
+  }
+
+  /* 2. Compactamos los elementos internos para que quepan bien en la pantalla */
+  .game-poster-container {
+    margin-top: 0.5rem; /* Reducimos el espacio entre el título y la foto */
+  }
+
+  .game-poster-img {
+    width: 80vw; /* Aseguramos que el póster no se desborde */
+    max-height: 30vh; /* Limitamos su altura para dejar espacio al texto */
+  }
+
+  .game-description {
+    font-size: 0.95rem; /* Letra un poco más pequeña en móvil */
+    margin-top: 1rem;
+    padding: 0 15px; /* Evita que el texto toque los bordes del celular */
+    line-height: 1.4;
+  }
+
+  .games-cta-container {
+    margin-top: 1.5rem; /* Reducimos el espacio gigante de 3rem que tenía arriba */
+    margin-bottom: 2rem; /* Reducimos el margen inferior */
+  }
+
+  /* =========================================
+     BOTÓN BACK HOME (Móvil)
+     ========================================= */
+  .back-home-btn {
+    font-size: 0.85rem; 
+    padding: 10px 18px; 
+    border-radius: 20px;
+  }
+
+  /* Ocultamos el texto largo y mostramos el corto en celulares */
+  .back-full { display: none !important; }
+  .back-short { display: inline !important; }
+}
